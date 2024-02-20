@@ -5,6 +5,7 @@ import {
   GuildMember,
   Interaction,
   Message,
+  PartialGuildMember,
 } from "discord.js";
 import aboutMessage from "./commands/about";
 import dotenv from "dotenv";
@@ -61,6 +62,26 @@ client.on("guildMemberAdd", async (member: GuildMember) => {
     console.error(error);
   }
 });
+
+client.on(
+  "guildMemberRemove",
+  async (member: GuildMember | PartialGuildMember) => {
+    try {
+      const welcomeChannel = await member.guild.channels.cache.get(
+        "1209531489591627836"
+      );
+      if (welcomeChannel && welcomeChannel.isTextBased()) {
+        const userEmbed = new EmbedBuilder()
+          .setTitle(`${member.user.username} has left the server!`)
+          .setImage(member.user.avatarURL())
+          .setColor("Red");
+        welcomeChannel.send({ embeds: [userEmbed] });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+);
 
 client.on("interactionCreate", async (interaction: Interaction) => {
   try {

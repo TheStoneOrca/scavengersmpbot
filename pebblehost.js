@@ -106,6 +106,23 @@ client.on("guildMemberAdd", async (member) => {
   }
 });
 
+client.on("guildMemberRemove", async (member) => {
+  try {
+    const welcomeChannel = await member.guild.channels.cache.get(
+      "1209531489591627836"
+    );
+    if (welcomeChannel && welcomeChannel.isTextBased()) {
+      const userEmbed = new EmbedBuilder()
+        .setTitle(`${member.user.username} has left the server!`)
+        .setImage(member.user.avatarURL())
+        .setColor("Red");
+      welcomeChannel.send({ embeds: [userEmbed] });
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 client.on("interactionCreate", async (interaction) => {
   try {
     if (!interaction.isCommand()) return;
